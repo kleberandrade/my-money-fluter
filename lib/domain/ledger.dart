@@ -22,13 +22,15 @@ abstract final class Money {
 
   static String input(int cents) =>
       '${cents ~/ 100},${(cents % 100).toString().padLeft(2, '0')}';
-  static String format(int cents) {
+  static String format(int cents) => formatTotal(BigInt.from(cents));
+
+  static String formatTotal(BigInt cents) {
     final absolute = cents.abs();
-    final whole = (absolute ~/ 100).toString().replaceAllMapped(
+    final whole = (absolute ~/ BigInt.from(100)).toString().replaceAllMapped(
       RegExp(r'(\d)(?=(\d{3})+$)'),
       (m) => '${m[1]}.',
     );
-    return '${cents < 0 ? '-' : ''}R\$ $whole,${(absolute % 100).toString().padLeft(2, '0')}';
+    return '${cents.isNegative ? '-' : ''}R\$ $whole,${(absolute % BigInt.from(100)).toString().padLeft(2, '0')}';
   }
 }
 
@@ -143,34 +145,41 @@ class MonthSummary {
           (e) => e.date.year == month.year && e.date.month == month.month,
         ),
       );
-  int _total(EntryKind kind) =>
-      entries.where((e) => e.kind == kind).fold(0, (sum, e) => sum + e.cents);
-  int get income => _total(EntryKind.income);
-  int get expenses => _total(EntryKind.expense);
-  int get balance => income - expenses;
-  int get settledBalance => entries
+  BigInt _total(EntryKind kind) => entries
+      .where((e) => e.kind == kind)
+      .fold(BigInt.zero, (sum, e) => sum + BigInt.from(e.cents));
+  BigInt get income => _total(EntryKind.income);
+  BigInt get expenses => _total(EntryKind.expense);
+  BigInt get balance => income - expenses;
+  BigInt get settledBalance => entries
       .where((e) => !e.pending)
       .fold(
-        0,
-        (sum, e) => sum + (e.kind == EntryKind.income ? e.cents : -e.cents),
+        BigInt.zero,
+        (sum, e) =>
+            sum + BigInt.from(e.kind == EntryKind.income ? e.cents : -e.cents),
       );
-  int get pending =>
-      entries.where((e) => e.pending).fold(0, (sum, e) => sum + e.cents);
-  Map<int, int> get dailyExpenses {
-    final result = SplayTreeMap<int, int>();
+  BigInt get pending => entries
+      .where((e) => e.pending)
+      .fold(BigInt.zero, (sum, e) => sum + BigInt.from(e.cents));
+  Map<int, BigInt> get dailyExpenses {
+    final result = SplayTreeMap<int, BigInt>();
     for (final e in entries.where((e) => e.kind == EntryKind.expense)) {
-      result.update(e.date.day, (v) => v + e.cents, ifAbsent: () => e.cents);
+      result.update(
+        e.date.day,
+        (v) => v + BigInt.from(e.cents),
+        ifAbsent: () => BigInt.from(e.cents),
+      );
     }
     return result;
   }
 
-  Map<String, int> get categoryExpenses {
-    final result = <String, int>{};
+  Map<String, BigInt> get categoryExpenses {
+    final result = <String, BigInt>{};
     for (final e in entries.where((e) => e.kind == EntryKind.expense)) {
       result.update(
         e.category?.name ?? 'Sem categoria',
-        (v) => v + e.cents,
-        ifAbsent: () => e.cents,
+        (v) => v + BigInt.from(e.cents),
+        ifAbsent: () => BigInt.from(e.cents),
       );
     }
     return result;

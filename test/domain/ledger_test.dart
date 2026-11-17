@@ -66,13 +66,30 @@ void main() {
         item(400, DateTime(2026, 12)),
         item(50, DateTime(2026, 11, 4), pending: true),
       ], DateTime(2026, 11));
-      expect(summary.income, 1000);
-      expect(summary.expenses, 80);
-      expect(summary.balance, 920);
-      expect(summary.settledBalance, 970);
-      expect(summary.pending, 50);
+      expect(summary.income, BigInt.from(1000));
+      expect(summary.expenses, BigInt.from(80));
+      expect(summary.balance, BigInt.from(920));
+      expect(summary.settledBalance, BigInt.from(970));
+      expect(summary.pending, BigInt.from(50));
       expect(summary.dailyExpenses.keys, [2, 4]);
-      expect(summary.dailyExpenses[2], 30);
+      expect(summary.dailyExpenses[2], BigInt.from(30));
+    },
+  );
+  test(
+    'large ledgers aggregate exactly beyond the browser safe-integer range',
+    () {
+      final item = Entry(
+        description: 'Limite',
+        cents: Money.maxCents,
+        date: DateTime(2026, 11),
+        kind: EntryKind.income,
+      );
+      final summary = MonthSummary(
+        List.filled(10001, item),
+        DateTime(2026, 11),
+      );
+      expect(summary.income, BigInt.parse('10000999999989999'));
+      expect(Money.formatTotal(summary.income), 'R\$ 100.009.999.999.899,99');
     },
   );
 }

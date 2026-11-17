@@ -5,7 +5,7 @@ import 'theme.dart';
 
 class BalanceCard extends StatelessWidget {
   final String label, detail;
-  final int value;
+  final BigInt value;
   final IconData icon;
   final bool primary, expense;
   const BalanceCard({
@@ -51,7 +51,7 @@ class BalanceCard extends StatelessWidget {
             fit: BoxFit.scaleDown,
             alignment: Alignment.centerLeft,
             child: Text(
-              Money.format(value),
+              Money.formatTotal(value),
               style: TextStyle(
                 fontSize: 32,
                 fontWeight: FontWeight.w600,
@@ -101,7 +101,7 @@ class Insights extends StatelessWidget {
                 height: 155,
                 child: Semantics(
                   label:
-                      'Despesas diárias: ${summary.dailyExpenses.entries.map((e) => 'dia ${e.key}: ${Money.format(e.value)}').join('; ')}',
+                      'Despesas diárias: ${summary.dailyExpenses.entries.map((e) => 'dia ${e.key}: ${Money.formatTotal(e.value)}').join('; ')}',
                   child: CustomPaint(
                     size: Size.infinite,
                     painter: _ExpensePainter(
@@ -173,7 +173,7 @@ class Insights extends StatelessWidget {
                           children: [
                             Text(group.key),
                             Text(
-                              Money.format(group.value),
+                              Money.formatTotal(group.value),
                               style: const TextStyle(
                                 fontSize: 12,
                                 fontWeight: FontWeight.w600,
@@ -184,7 +184,9 @@ class Insights extends StatelessWidget {
                       ),
                       const SizedBox(height: 8),
                       LinearProgressIndicator(
-                        value: group.value / summary.expenses,
+                        value:
+                            group.value.toDouble() /
+                            summary.expenses.toDouble(),
                         minHeight: 5,
                         borderRadius: BorderRadius.circular(5),
                         backgroundColor: canvas,
@@ -216,7 +218,7 @@ class Insights extends StatelessWidget {
 }
 
 class _ExpensePainter extends CustomPainter {
-  final Map<int, int> values;
+  final Map<int, BigInt> values;
   final int days;
   _ExpensePainter(this.values, this.days);
   @override
@@ -228,11 +230,14 @@ class _ExpensePainter extends CustomPainter {
       final y = size.height * i / 3;
       canvas.drawLine(Offset(0, y), Offset(size.width, y), grid);
     }
-    final maximum = values.values.fold(1, math.max);
+    final maximum = values.values
+        .fold(BigInt.one, (a, b) => a > b ? a : b)
+        .toDouble();
     final step = size.width / days;
     final paint = Paint()..color = const Color(0xff558171);
     for (var day = 1; day <= days; day++) {
-      final height = (values[day] ?? 0) / maximum * (size.height - 8);
+      final height =
+          (values[day] ?? BigInt.zero).toDouble() / maximum * (size.height - 8);
       canvas.drawRRect(
         RRect.fromRectAndRadius(
           Rect.fromLTWH(

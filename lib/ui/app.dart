@@ -442,7 +442,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
             BalanceCard(
               label: 'Saldo previsto',
               value: summary.balance,
-              detail: 'Efetivado: ${Money.format(summary.settledBalance)}',
+              detail: 'Efetivado: ${Money.formatTotal(summary.settledBalance)}',
               icon: Icons.account_balance_wallet_outlined,
               primary: true,
             ),
@@ -456,7 +456,7 @@ class _LedgerScreenState extends State<LedgerScreen> {
             BalanceCard(
               label: 'Despesas do mês',
               value: summary.expenses,
-              detail: 'Pendentes: ${Money.format(summary.pending)}',
+              detail: 'Pendentes: ${Money.formatTotal(summary.pending)}',
               icon: Icons.north_east,
               primary: false,
               expense: true,
