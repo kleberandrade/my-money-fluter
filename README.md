@@ -1,16 +1,37 @@
-# my_money
+# My Money
 
-A new Flutter project.
+[![Language: Dart](https://img.shields.io/badge/Language-Dart-0175C2)](https://github.com/kleberandrade/my-money-fluter/blob/main/pubspec.yaml)
+[![Framework: Flutter](https://img.shields.io/badge/Framework-Flutter-02569B)](https://github.com/kleberandrade/my-money-fluter/blob/main/pubspec.yaml)
 
-## Getting Started
+Flutter personal-finance app with categories, transactions and local data storage.
 
-This project is a starting point for a Flutter application.
+## Getting started
 
-A few resources to get you started if this is your first Flutter project:
+- Select a Flutter release whose bundled Dart SDK satisfies the manifest constraint, then run the commands below from the repository root.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+```sh
+flutter pub get
+flutter run
+```
 
-For help getting started with Flutter, view our
-[online documentation](https://flutter.dev/docs), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
+- If the app depends on Firebase or another external service, configure your own service project using the dependencies and original notes; credentials are not supplied by this guide.
+
+## Recorded requirements
+
+- Dart SDK constraint from [`pubspec.yaml`](https://github.com/kleberandrade/my-money-fluter/blob/main/pubspec.yaml): `>=2.7.0 <3.0.0`.
+
+## Repository map
+
+- [lib](https://github.com/kleberandrade/my-money-fluter/tree/main/lib)
+- [test](https://github.com/kleberandrade/my-money-fluter/tree/main/test)
+- [android](https://github.com/kleberandrade/my-money-fluter/tree/main/android)
+- [ios](https://github.com/kleberandrade/my-money-fluter/tree/main/ios)
+
+## Validation status
+
+This update documents the tracked source and project metadata. It does not certify a successful build, device test or compatibility with a current toolchain. Follow any project-specific validation instructions in the original material.
+
+## License and attribution
+
+No standalone repository-wide license file was identified in this review. Preserve the original credits and any component-specific licenses; this documentation update grants no additional rights.
+
